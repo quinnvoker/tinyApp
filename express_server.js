@@ -1,12 +1,22 @@
 const express = require("express");
+const bodyParser = require('body-parser');
 const app = express();
 const PORT = 8080; // default port 8080
 
 app.set('view engine', 'ejs');
 
+app.use(bodyParser.urlencoded({extended: true}));
+
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
+};
+
+const generateRandomString = () => {
+  const allValidChars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  return '000000'.split('')
+    .map(() => allValidChars[Math.floor(Math.random() * allValidChars.length)])
+    .join('');
 };
 
 app.get("/", (req, res) => {
@@ -20,6 +30,13 @@ app.get("/urls.json", (req, res) => {
 app.get('/urls', (req, res) => {
   let templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
+});
+
+app.post('/urls', (req, res) => {
+  const shortURL = generateRandomString();
+  urlDatabase[shortURL] = req.body.longURL;
+  console.log(urlDatabase);
+  res.send('Ok');
 });
 
 app.get('/urls/new', (req, res) => {
