@@ -36,7 +36,7 @@ app.post('/urls', (req, res) => {
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
   console.log(`Added ${req.body.longURL} to database with shortURL ${shortURL}`);
-  res.redirect(`./urls/${shortURL}`);
+  res.redirect(`/urls/${shortURL}`);
 });
 
 app.get('/urls/new', (req, res) => {
@@ -58,6 +58,16 @@ app.get('/u/:shortURL', (req, res) => {
   }
 });
 
+app.post('/urls/:shortURL/delete', (req, res) => {
+  const shortURL = req.params.shortURL;
+  if (urlDatabase[shortURL]) {
+    delete urlDatabase[shortURL];
+    res.redirect(`/urls`);
+  } else {
+    res.statusCode = 404;
+    res.send(`404: short url ${shortURL} was not found on the server!`);
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
