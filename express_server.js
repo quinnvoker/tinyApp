@@ -69,6 +69,18 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   }
 });
 
+app.post('/urls/:shortURL', (req, res) => {
+  const shortURL = req.params.shortURL;
+  const longURL = req.body.longURL;
+  if (urlDatabase[shortURL]) {
+    urlDatabase[shortURL] = longURL;
+    res.redirect(`/urls`);
+  } else {
+    res.statusCode = 404;
+    res.send(`404: short url ${shortURL} was not found on the server!`);
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
