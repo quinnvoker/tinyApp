@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/quinnvoker/tinyApp/issues"
   },
-  "homepage": "https://github.com/quinnvoker/tinyApp#readme"
+  "homepage": "https://github.com/quinnvoker/tinyApp#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
