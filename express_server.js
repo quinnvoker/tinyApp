@@ -48,6 +48,16 @@ app.get('/urls/:shortURL', (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+app.get('/u/:shortURL', (req, res) => {
+  const shortURL = req.params.shortURL;
+  if (urlDatabase[shortURL]) {
+    res.redirect(urlDatabase[shortURL]);
+  } else {
+    res.statusCode = 404;
+    res.send(`404: short url ${shortURL} was not found on the server!`);
+  }
+});
+
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
