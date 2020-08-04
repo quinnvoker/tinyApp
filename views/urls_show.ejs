@@ -3,12 +3,6 @@
 <head>
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-  <!-- form centre alignment from https://www.tutorialsplane.com/center-align-form-in-bootstrap/ -->
-  <style type="text/css">
-    .custom-centered{
-      margin:0 auto;
-      width:400px;
-    }
   </style>
   <title>URL - TinyApp Example</title>
 </head>
@@ -23,9 +17,9 @@
       </div>
     <div class="card-footer text-muted">
       <h2>Edit</h2>
-      <form class="form-inline" method="POST" action=<%= '/urls/' + shortURL %>>
+      <form class="form-inline justify-content-center" method="POST" action=<%= '/urls/' + shortURL %>>
         <label for="longURL">New URL:</label>
-        <input class="form-control" type="text" name="longURL" placeholder="http://" style="width: 300px; margin: 1em">
+        <input class="form-control" type="text" name="longURL" placeholder="http://" style="margin: 1em">
         <button type= "submit" class= "btn btn-primary">Submit</button>
       </form>
     </div>
