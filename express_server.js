@@ -105,10 +105,15 @@ app.post('/register', (req, res) => {
   const id = generateRandomString(6);
   const email = req.body.email;
   const password = req.body.password;
-  users[id] = { id, email, password };
-  res.cookie('user_id', id);
-  console.log(JSON.stringify(users, 2));
-  res.redirect('/urls');
+  if (!email || !password) {
+    res.statusCode = 400;
+    res.send('400: invalid email or password');
+  } else {
+    users[id] = { id, email, password };
+    res.cookie('user_id', id);
+    console.log(JSON.stringify(users, 2));
+    res.redirect('/urls');
+  }
 });
 
 app.listen(PORT, () => {
