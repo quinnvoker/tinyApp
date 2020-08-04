@@ -18,6 +18,12 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+//returns key of the user registered with a given email address, null if not found
+const findUserByEmail = (email) => {
+  const foundKeys = Object.keys(users).filter((key) => users[key].email === email);
+  return foundKeys.length > 0 ? foundKeys[0] : null;
+};
+
 app.get("/", (req, res) => {
   res.redirect("/urls");
 });
@@ -111,7 +117,6 @@ app.post('/register', (req, res) => {
   } else {
     users[id] = { id, email, password };
     res.cookie('user_id', id);
-    console.log(JSON.stringify(users, 2));
     res.redirect('/urls');
   }
 });
