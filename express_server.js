@@ -103,13 +103,23 @@ app.post('/urls/:shortURL', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-  let name = req.body.username;
-  res.cookie('username', name);
-  res.redirect('/urls');
+  const email = req.body.email;
+  const password = req.body.password;
+  const user = users[findUserByEmail(email)];
+  if (!user) {
+    res.statusCode = 403;
+    res.send('403: no user exists with email address entered');
+  } else if (password !== user.password) {
+    res.statusCode = 403;
+    res.send('403: incorrect password');
+  } else {
+    res.cookie('user_id', user.id);
+    res.redirect('/urls');
+  }
 });
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('username');
+  res.clearCookie('user_id');
   res.redirect('/urls');
 });
 
