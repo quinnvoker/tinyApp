@@ -114,6 +114,9 @@ app.post('/register', (req, res) => {
   if (!email || !password) {
     res.statusCode = 400;
     res.send('400: invalid email or password');
+  } else if (findUserByEmail(email)) {
+    res.statusCode = 400;
+    res.send('400: email address already in use!');
   } else {
     users[id] = { id, email, password };
     res.cookie('user_id', id);
