@@ -3,3 +3,7 @@
   margin-right: 1em;
   width: 300px;
 }
+
+.account-button {
+  display: inline;
+}
