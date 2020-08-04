@@ -45,8 +45,9 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
-  const user = users[req.cookies.user_id];
-  let templateVars = { user, urls: urlDatabase };
+  const userID = req.cookies.user_id;
+  const user = users[userID];
+  let templateVars = { user, urls: urlsForUser(userID) };
   res.render("urls_index", templateVars);
 });
 
@@ -61,9 +62,12 @@ app.get('/urls/new', (req, res) => {
 });
 
 app.get('/urls/:shortURL', (req, res) => {
-  const user = users[req.cookies.user_id];
+  const userID = req.cookies.user_id;
+  const user = users[userID];
   const shortURL = req.params.shortURL;
-  let templateVars = { user, shortURL, longURL: urlDatabase[shortURL].longURL };
+  const longURL = urlDatabase[shortURL].longURL;
+  const isOwner = urlDatabase[shortURL].userID === userID;
+  let templateVars = { user, shortURL, longURL, isOwner };
   res.render("urls_show", templateVars);
 });
 

@@ -16,12 +16,16 @@
         <p class="card-text">Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
       </div>
     <div class="card-footer text-muted">
-      <h2>Edit</h2>
-      <form class="form-inline justify-content-center" method="POST" action=<%= '/urls/' + shortURL %>>
-        <label for="longURL">New URL:</label>
-        <input class="form-control spaced-input" type="text" name="longURL" placeholder="http://">
-        <button type= "submit" class= "btn btn-primary">Submit</button>
-      </form>
+      <% if (isOwner) { %>
+        <h2>Edit</h2>
+        <form class="form-inline justify-content-center" method="POST" action=<%= '/urls/' + shortURL %>>
+          <label for="longURL">New URL:</label>
+          <input class="form-control spaced-input" type="text" name="longURL" placeholder="http://">
+          <button type= "submit" class= "btn btn-primary">Submit</button>
+        </form>
+      <% } else { %>
+        <h5>Only this TinyURL's owner can change what it links to.<% if (!user) { %> Please log in first!<% } %></h5>
+      <% } %>
     </div>
   </div>
   <!-- Bootstrap JS -->
