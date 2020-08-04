@@ -23,7 +23,7 @@ const generateRandomString = () => {
 };
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  res.redirect("/urls");
 });
 
 app.get("/urls.json", (req, res) => {
@@ -34,13 +34,6 @@ app.get('/urls', (req, res) => {
   const username = req.cookies.username;
   let templateVars = { username, urls: urlDatabase };
   res.render("urls_index", templateVars);
-});
-
-app.post('/urls', (req, res) => {
-  const shortURL = generateRandomString();
-  urlDatabase[shortURL] = req.body.longURL;
-  console.log(`Added ${req.body.longURL} to database with shortURL ${shortURL}`);
-  res.redirect(`/urls/${shortURL}`);
 });
 
 app.get('/urls/new', (req, res) => {
@@ -61,6 +54,13 @@ app.get('/u/:shortURL', (req, res) => {
     res.statusCode = 404;
     res.send(`404: short url ${shortURL} was not found on the server!`);
   }
+});
+
+app.post('/urls', (req, res) => {
+  const shortURL = generateRandomString();
+  urlDatabase[shortURL] = req.body.longURL;
+  console.log(`Added ${req.body.longURL} to database with shortURL ${shortURL}`);
+  res.redirect(`/urls/${shortURL}`);
 });
 
 app.post('/urls/:shortURL/delete', (req, res) => {
