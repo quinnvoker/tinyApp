@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
 const generateRandomString = require('./randomString');
 const app = express();
 const PORT = 8080; // default port 8080
@@ -16,8 +17,8 @@ const users = {};
 const urlDatabase = {
   "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userID: 'quinnb' },
   "9sm5xK": { longURL: "http://www.google.com", userID: 'quinnb' },
-  "b2xVn3": { longURL: "http://www.youtube.com", userID: 'mikex' },
-  "9sm5x3": { longURL: "http://www.twitch.tv", userID: 'mikex' },
+  "b2xVn3": { longURL: "http://www.youtube.com", userID: 'mikexv' },
+  "9sm5x3": { longURL: "http://www.twitch.tv", userID: 'mikexv' },
 };
 
 //returns key of the user registered with a given email address, null if not found
@@ -105,11 +106,16 @@ app.post('/urls', (req, res) => {
 app.post('/urls/:shortURL/delete', (req, res) => {
   const shortURL = req.params.shortURL;
   if (urlDatabase[shortURL]) {
-    delete urlDatabase[shortURL];
-    res.redirect(`/urls`);
+    if (urlDatabase[shortURL].userID === req.params.user_id) {
+      delete urlDatabase[shortURL];
+      res.redirect(`/urls`);
+    } else {
+      res.statusCode = 403;
+      res.send('403: You do not have permission to delete this TinyURL');
+    }
   } else {
     res.statusCode = 404;
-    res.send(`404: short url ${shortURL} was not found on the server!`);
+    res.send(`404: TinyURL '${shortURL}' was not found on the server!`);
   }
 });
 
@@ -117,11 +123,16 @@ app.post('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = req.body.longURL;
   if (urlDatabase[shortURL]) {
-    urlDatabase[shortURL] = longURL;
-    res.redirect(`/urls`);
+    if (urlDatabase[shortURL].userID === req.params.user_id) {
+      urlDatabase[shortURL] = longURL;
+      res.redirect(`/urls`);
+    } else {
+      res.statusCode = 403;
+      res.send('403: You do not have permission to edit this TinyURL');
+    }
   } else {
     res.statusCode = 404;
-    res.send(`404: short url ${shortURL} was not found on the server!`);
+    res.send(`404: TinyURL '${shortURL}' was not found on the server!`);
   }
 });
 
@@ -132,7 +143,7 @@ app.post('/login', (req, res) => {
   if (!user) {
     res.statusCode = 403;
     res.send('403: no user exists with email address entered');
-  } else if (password !== user.password) {
+  } else if (!bcrypt.compareSync(password, user.password)) {
     res.statusCode = 403;
     res.send('403: incorrect password');
   } else {
@@ -150,6 +161,7 @@ app.post('/register', (req, res) => {
   const id = generateRandomString(6);
   const email = req.body.email;
   const password = req.body.password;
+  const hashedPass = bcrypt.hashSync(password, 10);
   if (!email || !password) {
     res.statusCode = 400;
     res.send('400: invalid email or password');
@@ -157,7 +169,7 @@ app.post('/register', (req, res) => {
     res.statusCode = 400;
     res.send('400: email address already in use!');
   } else {
-    users[id] = { id, email, password };
+    users[id] = { id, email, password: hashedPass };
     res.cookie('user_id', id);
     res.redirect('/urls');
   }
