@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const generateRandomString = require('./randomString');
 const app = express();
 const PORT = 8080; // default port 8080
 
@@ -13,13 +14,6 @@ app.use(express.static('public'));
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
-};
-
-const generateRandomString = () => {
-  const allValidChars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  return '000000'.split('')
-    .map(() => allValidChars[Math.floor(Math.random() * allValidChars.length)])
-    .join('');
 };
 
 app.get("/", (req, res) => {
@@ -62,7 +56,7 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/urls', (req, res) => {
-  const shortURL = generateRandomString();
+  const shortURL = generateRandomString(6);
   urlDatabase[shortURL] = req.body.longURL;
   console.log(`Added ${req.body.longURL} to database with shortURL ${shortURL}`);
   res.redirect(`/urls/${shortURL}`);
