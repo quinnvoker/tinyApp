@@ -14,8 +14,8 @@ app.use(express.static('public'));
 const users = {};
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userID: 'quinnb' },
+  "9sm5xK": { longURL: "http://www.google.com", userID: 'quinnb' },
 };
 
 //returns key of the user registered with a given email address, null if not found
@@ -50,14 +50,15 @@ app.get('/urls/new', (req, res) => {
 
 app.get('/urls/:shortURL', (req, res) => {
   const user = users[req.cookies.user_id];
-  let templateVars = { user, shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
+  const shortURL = req.params.shortURL;
+  let templateVars = { user, shortURL, longURL: urlDatabase[shortURL].longURL };
   res.render("urls_show", templateVars);
 });
 
 app.get('/u/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
   if (urlDatabase[shortURL]) {
-    res.redirect(urlDatabase[shortURL]);
+    res.redirect(urlDatabase[shortURL].longURL);
   } else {
     res.statusCode = 404;
     res.send(`404: short url ${shortURL} was not found on the server!`);
@@ -78,8 +79,10 @@ app.get('/login', (req, res) => {
 
 app.post('/urls', (req, res) => {
   const shortURL = generateRandomString(6);
-  urlDatabase[shortURL] = req.body.longURL;
-  console.log(`Added ${req.body.longURL} to database with shortURL ${shortURL}`);
+  const userID = req.cookies.user_id;
+  const longURL = req.body.longURL;
+  urlDatabase[shortURL] = { longURL, userID };
+  console.log(`Added ${longURL} to database with shortURL ${shortURL} with userID '${userID}'`);
   res.redirect(`/urls/${shortURL}`);
 });
 
