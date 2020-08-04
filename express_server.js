@@ -16,12 +16,24 @@ const users = {};
 const urlDatabase = {
   "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userID: 'quinnb' },
   "9sm5xK": { longURL: "http://www.google.com", userID: 'quinnb' },
+  "b2xVn3": { longURL: "http://www.youtube.com", userID: 'mikex' },
+  "9sm5x3": { longURL: "http://www.twitch.tv", userID: 'mikex' },
 };
 
 //returns key of the user registered with a given email address, null if not found
 const findUserByEmail = (email) => {
-  const foundKeys = Object.keys(users).filter((key) => users[key].email === email);
+  const foundKeys = Object.keys(users)
+    .filter((key) => users[key].email === email);
   return foundKeys.length > 0 ? foundKeys[0] : null;
+};
+
+const urlsForUser = (id) => {
+  return Object.keys(urlDatabase)
+    .filter(key => urlDatabase[key].userID === id)
+    .reduce((result, currentKey) => {
+      result[currentKey] = urlDatabase[currentKey];
+      return result;
+    }, {});
 };
 
 app.get("/", (req, res) => {
