@@ -85,15 +85,25 @@ app.get('/u/:shortURL', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-  const user = users[req.session.user_id];
-  let templateVars = { user };
-  res.render('register', templateVars);
+  const userID = req.session.user_id;
+  const user = users[userID];
+  if (!user) {
+    let templateVars = { user };
+    res.render('register', templateVars);
+  } else {
+    res.redirect('/urls');
+  }
 });
 
 app.get('/login', (req, res) => {
-  const user = users[req.session.user_id];
-  let templateVars = { user };
-  res.render('login', templateVars);
+  const userID = req.session.user_id;
+  const user = users[userID];
+  if (!user) {
+    let templateVars = { user };
+    res.render('login', templateVars);
+  } else {
+    res.redirect('/urls');
+  }
 });
 
 app.post('/urls', (req, res) => {
