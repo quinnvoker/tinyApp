@@ -1,6 +1,6 @@
 const { expect } = require('chai');
 
-const { getUserByEmail, urlsForUser, hitURL } = require('../helpers.js');
+const { getUserByEmail, urlsForUser, hitURL, getTotalHits } = require('../helpers.js');
 
 const testUsers = {
   "userRandomID": {
@@ -16,7 +16,7 @@ const testUsers = {
 };
 
 const testURLs = {
-  "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userId: 'quinnb', hits: {} },
+  "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userId: 'quinnb', hits: { 'xxxxxx': [123, 124, 125], 'yyyyyy': [111, 126, 134] } },
   "9sm5xK": { longURL: "http://www.google.com", userId: 'quinnb', hits: {} },
   "b2xVn3": { longURL: "http://www.youtube.com", userId: 'mikexv', hits: {} },
   "9sm5x3": { longURL: "http://www.twitch.tv", userId: 'mikexv', hits: {} },
@@ -38,7 +38,7 @@ describe('urlsForUser', () => {
   it('should return a database containing only the urls for the given user', () => {
     const quinnURLs = urlsForUser('quinnb', testURLs);
     const expectedURLs = {
-      "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userId: 'quinnb', hits: {} },
+      "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userId: 'quinnb', hits: { 'xxxxxx': [123, 124, 125], 'yyyyyy': [111, 126, 134] } },
       "9sm5xK": { longURL: "http://www.google.com", userId: 'quinnb', hits: {} },
     };
     expect(quinnURLs).to.deep.equal(expectedURLs);
@@ -52,7 +52,7 @@ describe('urlsForUser', () => {
 
 describe('hitURL', () => {
   it('should add a new hit to the given url on each call', () => {
-    const url = 'b2xVn2';
+    const url = '9sm5xK';
     const visitorId = 'testID';
     hitURL(url, visitorId, testURLs);
     hitURL(url, visitorId, testURLs);
@@ -62,5 +62,16 @@ describe('hitURL', () => {
     const url = 'notReal';
     const visitorId = 'testID';
     expect(hitURL(url, visitorId, testURLs)).to.be.undefined;
+  });
+});
+
+describe('getTotalHits', () => {
+  it('should return the number of hits a link has received from all visitors', () => {
+    const url = 'b2xVn2';
+    expect(getTotalHits(url, testURLs)).to.equal(6);
+  });
+  it('should return undefined if given url is invalid', () => {
+    const url = 'notReal';
+    expect(getTotalHits(url, testURLs)).to.be.undefined;
   });
 });

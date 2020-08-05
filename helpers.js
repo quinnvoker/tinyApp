@@ -37,20 +37,29 @@ const hitURL = (url, visitorId, database) => {
 
 // returns how many times a given url has been visited
 const getTotalHits = (url, database) => {
-  const urlHits = database[url].hits;
+  const urlHits = database[url] ? database[url].hits : null;
+  if (!urlHits) {
+    return;
+  }
   return Object.keys(urlHits)
     .reduce((total, visitor) => total + urlHits[visitor].length, 0);
 };
 
 // returns how many unique visitors have visited the given url
 const getUniqueHits = (url, database) => {
-  const urlHits = database[url].hits;
+  const urlHits = database[url] ? database[url].hits : null;
+  if (!urlHits) {
+    return;
+  }
   return Object.keys(urlHits).length;
 };
 
 // returns a sorted array of visit objects (visitor: timestamp) for a given url
 const getAllHits = (url, database) => {
-  const urlHits = database[url].hits;
+  const urlHits = database[url] ? database[url].hits : null;
+  if (!urlHits) {
+    return;
+  }
   return Object.keys(urlHits)
     .reduce((list, visitor) => {
       // turn each visitor's hit array into an array of visitorId: timestamp pairs
