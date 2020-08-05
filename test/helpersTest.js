@@ -1,6 +1,6 @@
 const { expect } = require('chai');
 
-const { getUserByEmail, urlsForUser, hitURL, getTotalHits, getUniqueHits } = require('../helpers.js');
+const { getUserByEmail, urlsForUser, hitURL, getTotalHits, getUniqueHits, getAllHits } = require('../helpers.js');
 
 const testUsers = {
   "userRandomID": {
@@ -68,6 +68,7 @@ describe('hitURL', () => {
 describe('getTotalHits', () => {
   it('should return the number of hits a link has received from all visitors', () => {
     const url = 'b2xVn2';
+    // hits for this url: { 'xxxxxx': [123, 124, 125], 'yyyyyy': [111, 126, 134] }
     expect(getTotalHits(url, testURLs)).to.equal(6);
   });
   it('should return undefined if given url is invalid', () => {
@@ -79,10 +80,31 @@ describe('getTotalHits', () => {
 describe('getUniqueHits', () => {
   it('should return the number of visitor ids that have visited a link', () => {
     const url = 'b2xVn2';
+    // hits for this url: { 'xxxxxx': [123, 124, 125], 'yyyyyy': [111, 126, 134] }
     expect(getUniqueHits(url, testURLs)).to.equal(2);
   });
   it('should return undefined if given url is invalid', () => {
     const url = 'notReal';
     expect(getUniqueHits(url, testURLs)).to.be.undefined;
+  });
+});
+
+describe('getAllHits', () => {
+  it('should return a sorted array containing all vistorId: timestamp pairs for a link', () => {
+    const url = 'b2xVn2';
+    // hits for this url: { 'xxxxxx': [123, 124, 125], 'yyyyyy': [111, 126, 134] }
+    const expectedArray = [
+      { yyyyyy: 134 },
+      { yyyyyy: 126 },
+      { xxxxxx: 125 },
+      { xxxxxx: 124 },
+      { xxxxxx: 123 },
+      { yyyyyy: 111 },
+    ];
+    expect(getAllHits(url, testURLs)).to.deep.equal(expectedArray);
+  });
+  it('should return undefined if given url is invalid', () => {
+    const url = 'notReal';
+    expect(getAllHits(url, testURLs)).to.be.undefined;
   });
 });
