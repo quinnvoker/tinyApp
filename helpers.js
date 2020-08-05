@@ -1,7 +1,7 @@
-const findUserByEmail = (email, database) => {
+const getUserByEmail = (email, database) => {
   const foundKeys = Object.keys(database)
     .filter((key) => database[key].email === email);
-  return foundKeys.length > 0 ? foundKeys[0] : null;
+  return foundKeys.length > 0 ? foundKeys[0] : undefined;
 };
 
 const urlsForUser = (id, database) => {
@@ -20,4 +20,4 @@ const generateRandomString = (length) => {
     .join('');
 };
 
-module.exports = { findUserByEmail, urlsForUser, generateRandomString };
+module.exports = { getUserByEmail, urlsForUser, generateRandomString };

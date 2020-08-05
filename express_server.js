@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
-const { generateRandomString, findUserByEmail, urlsForUser } = require('./helpers');
+const { generateRandomString, getUserByEmail, urlsForUser } = require('./helpers');
 const app = express();
 const PORT = 8080; // default port 8080
 
@@ -128,7 +128,7 @@ app.post('/urls/:shortURL', (req, res) => {
 app.post('/login', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const user = users[findUserByEmail(email, users)];
+  const user = users[getUserByEmail(email, users)];
   if (!user) {
     res.statusCode = 403;
     res.send('403: no user exists with email address entered');
@@ -154,7 +154,7 @@ app.post('/register', (req, res) => {
   if (!email || !password) {
     res.statusCode = 400;
     res.send('400: invalid email or password');
-  } else if (findUserByEmail(email, users)) {
+  } else if (getUserByEmail(email, users)) {
     res.statusCode = 400;
     res.send('400: email address already in use!');
   } else {

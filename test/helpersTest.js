@@ -1,6 +1,6 @@
 const { expect } = require('chai');
 
-const { findUserByEmail } = require('../helpers.js');
+const { getUserByEmail } = require('../helpers.js');
 
 const testUsers = {
   "userRandomID": {
@@ -17,7 +17,7 @@ const testUsers = {
 
 describe('getUserByEmail', function() {
   it('should return a user with valid email', function() {
-    const user = findUserByEmail("user@example.com", testUsers);
+    const user = getUserByEmail("user@example.com", testUsers);
     const expectedOutput = "userRandomID";
     expect(user).to.equal(expectedOutput);
   });
