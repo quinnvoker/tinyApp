@@ -25,6 +25,15 @@ const urlDatabase = {
   "9sm5x3": { longURL: "http://www.twitch.tv", userID: 'mikexv' },
 };
 
+const sendError = (req, res, message, code = 200) => {
+  res.statusCode = code;
+  const userID = req.session.user_id;
+  const user = users[userID];
+  const errorMsg = `${code}: ${message}`;
+  const templateVars = { user, errorMsg };
+  res.render('error', templateVars);
+};
+
 app.get("/", (req, res) => {
   const user = users[req.session.user_id];
   if (!user) {
@@ -60,9 +69,7 @@ app.get('/urls/:shortURL', (req, res) => {
   const user = users[userID];
   const shortURL = req.params.shortURL;
   if (!urlDatabase[shortURL]) {
-    res.statusCode = 404;
-    const templateVars = { user, errorMsg: `404: TinyURL '${shortURL}' not found in database!` };
-    res.render('error', templateVars);
+    sendError(req, res, `TinyURL '${shortURL}' not found in database!`, 404);
   } else {
     const longURL = urlDatabase[shortURL].longURL;
     const isOwner = urlDatabase[shortURL].userID === userID;
@@ -76,11 +83,7 @@ app.get('/u/:shortURL', (req, res) => {
   if (urlDatabase[shortURL]) {
     res.redirect(urlDatabase[shortURL].longURL);
   } else {
-    res.statusCode = 404;
-    const userID = req.session.user_id;
-    const user = users[userID];
-    const templateVars = { user, errorMsg: `404: TinyURL '${shortURL}' not found in database!` };
-    res.render('error', templateVars);
+    sendError(req, res, `TinyURL '${shortURL}' not found in database!`, 404);
   }
 });
 
@@ -117,42 +120,32 @@ app.post('/urls', (req, res) => {
 
 app.post('/urls/:shortURL/delete', (req, res) => {
   const userID = req.session.user_id;
-  const user = users[userID];
   const shortURL = req.params.shortURL;
   if (urlDatabase[shortURL]) {
     if (urlDatabase[shortURL].userID === userID) {
       delete urlDatabase[shortURL];
       res.redirect(`/urls`);
     } else {
-      res.statusCode = 403;
-      const templateVars = { user, errorMsg: `403: You do not have permission to delete this TinyURL` };
-      res.render('error', templateVars);
+      sendError(req, res, 'You do not have permission to delete this TinyURL', 403);
     }
   } else {
-    res.statusCode = 404;
-    const templateVars = { user, errorMsg: `404: TinyURL '${shortURL}' was not found on the server!` };
-    res.render('error', templateVars);
+    sendError(req, res, `TinyURL '${shortURL}' was not found on the server!`, 404);
   }
 });
 
 app.post('/urls/:shortURL', (req, res) => {
   const userID = req.session.user_id;
-  const user = users[userID];
   const shortURL = req.params.shortURL;
   const longURL = req.body.longURL;
   if (urlDatabase[shortURL]) {
-    if (urlDatabase[shortURL].userID === req.session.user_id) {
+    if (urlDatabase[shortURL].userID === userID) {
       urlDatabase[shortURL].longURL = longURL;
       res.redirect(`/urls`);
     } else {
-      res.statusCode = 403;
-      const templateVars = { user, errorMsg: `403: You do not have permission to edit this TinyURL` };
-      res.render('error', templateVars);
+      sendError(req, res, 'You do not have permission to edit this TinyURL', 403);
     }
   } else {
-    res.statusCode = 404;
-    const templateVars = { user, errorMsg: `404: TinyURL '${shortURL}' was not found on the server!` };
-    res.render('error', templateVars);
+    sendError(req, res, `TinyURL '${shortURL}' was not found on the server!`, 404);
   }
 });
 
@@ -161,13 +154,9 @@ app.post('/login', (req, res) => {
   const password = req.body.password;
   const user = users[getUserByEmail(email, users)];
   if (!user) {
-    res.statusCode = 403;
-    const templateVars = { user, errorMsg: `403: no user exists with email address entered` };
-    res.render('error', templateVars);
+    sendError(req, res, 'Given email address not associated with any registered user', 403);
   } else if (!bcrypt.compareSync(password, user.password)) {
-    res.statusCode = 403;
-    const templateVars = { user, errorMsg: `403: incorrect password` };
-    res.render('error', templateVars);
+    sendError(req, res, 'Incorrect password', 403);
   } else {
     req.session.user_id = user.id;
     res.redirect('/urls');
@@ -185,13 +174,15 @@ app.post('/register', (req, res) => {
   const password = req.body.password;
   const hashedPass = bcrypt.hashSync(password, 10);
   if (!email || !password) {
-    res.statusCode = 400;
-    const templateVars = { user: null, errorMsg: `400: invalid email or password` };
-    res.render('error', templateVars);
+    sendError(req, res, 'Invalid email or password', 400);
+    // res.statusCode = 400;
+    // const templateVars = { user: null, errorMsg: `400: invalid email or password` };
+    // res.render('error', templateVars);
   } else if (getUserByEmail(email, users)) {
-    res.statusCode = 400;
-    const templateVars = { user: null, errorMsg: `400: email address already in use!` };
-    res.render('error', templateVars);
+    sendError(req, res, 'Email address already registered!', 400);
+    // res.statusCode = 400;
+    // const templateVars = { user: null, errorMsg: `400: email address already in use!` };
+    // res.render('error', templateVars);
   } else {
     users[id] = { id, email, password: hashedPass };
     req.session.user_id = id;
