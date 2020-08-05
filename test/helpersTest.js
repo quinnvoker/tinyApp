@@ -16,10 +16,10 @@ const testUsers = {
 };
 
 const testURLs = {
-  "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userID: 'quinnb' },
-  "9sm5xK": { longURL: "http://www.google.com", userID: 'quinnb' },
-  "b2xVn3": { longURL: "http://www.youtube.com", userID: 'mikexv' },
-  "9sm5x3": { longURL: "http://www.twitch.tv", userID: 'mikexv' },
+  "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userId: 'quinnb' },
+  "9sm5xK": { longURL: "http://www.google.com", userId: 'quinnb' },
+  "b2xVn3": { longURL: "http://www.youtube.com", userId: 'mikexv' },
+  "9sm5x3": { longURL: "http://www.twitch.tv", userId: 'mikexv' },
 };
 
 describe('getUserByEmail', () => {
@@ -38,8 +38,8 @@ describe('urlsForUser', () => {
   it('should return a database containing only the urls for the given user', () => {
     const quinnURLs = urlsForUser('quinnb', testURLs);
     const expectedURLs = {
-      "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userID: 'quinnb' },
-      "9sm5xK": { longURL: "http://www.google.com", userID: 'quinnb' },
+      "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userId: 'quinnb' },
+      "9sm5xK": { longURL: "http://www.google.com", userId: 'quinnb' },
     };
     expect(quinnURLs).to.deep.equal(expectedURLs);
   });

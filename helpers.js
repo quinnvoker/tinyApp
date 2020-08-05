@@ -6,7 +6,7 @@ const getUserByEmail = (email, database) => {
 
 const urlsForUser = (id, database) => {
   return Object.keys(database)
-    .filter(key => database[key].userID === id)
+    .filter(key => database[key].userId === id)
     .reduce((result, currentKey) => {
       result[currentKey] = database[currentKey];
       return result;
