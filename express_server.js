@@ -26,9 +26,9 @@ const urlDatabase = {
 };
 
 //returns key of the user registered with a given email address, null if not found
-const findUserByEmail = (email) => {
-  const foundKeys = Object.keys(users)
-    .filter((key) => users[key].email === email);
+const findUserByEmail = (email, database) => {
+  const foundKeys = Object.keys(database)
+    .filter((key) => database[key].email === email);
   return foundKeys.length > 0 ? foundKeys[0] : null;
 };
 
@@ -144,7 +144,7 @@ app.post('/urls/:shortURL', (req, res) => {
 app.post('/login', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const user = users[findUserByEmail(email)];
+  const user = users[findUserByEmail(email, users)];
   if (!user) {
     res.statusCode = 403;
     res.send('403: no user exists with email address entered');
@@ -170,7 +170,7 @@ app.post('/register', (req, res) => {
   if (!email || !password) {
     res.statusCode = 400;
     res.send('400: invalid email or password');
-  } else if (findUserByEmail(email)) {
+  } else if (findUserByEmail(email, users)) {
     res.statusCode = 400;
     res.send('400: email address already in use!');
   } else {
