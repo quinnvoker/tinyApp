@@ -1,6 +1,6 @@
 const { expect } = require('chai');
 
-const { getUserByEmail, urlsForUser, hitURL, getTotalHits } = require('../helpers.js');
+const { getUserByEmail, urlsForUser, hitURL, getTotalHits, getUniqueHits } = require('../helpers.js');
 
 const testUsers = {
   "userRandomID": {
@@ -73,5 +73,16 @@ describe('getTotalHits', () => {
   it('should return undefined if given url is invalid', () => {
     const url = 'notReal';
     expect(getTotalHits(url, testURLs)).to.be.undefined;
+  });
+});
+
+describe('getUniqueHits', () => {
+  it('should return the number of visitor ids that have visited a link', () => {
+    const url = 'b2xVn2';
+    expect(getUniqueHits(url, testURLs)).to.equal(2);
+  });
+  it('should return undefined if given url is invalid', () => {
+    const url = 'notReal';
+    expect(getUniqueHits(url, testURLs)).to.be.undefined;
   });
 });
