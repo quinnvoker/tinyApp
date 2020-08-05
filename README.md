@@ -1,11 +1,11 @@
-# TinyApp Project
+# Quinn's TinyApp!
 
 TinyApp is a full stack web application built with Node and Express that allows users to shorten long URLs (à la bit.ly). It supports user registration and login, and allows multiple each user to add to and update their own personal collection of shortened URLs.
 
 ## Final Product
 
-!["screenshot description"](#)
-!["screenshot description"](#)
+!["Screenshot of a user's index of shortened URLs"](https://raw.githubusercontent.com/quinnvoker/tinyApp/master/docs/url_index.png)
+!["Screenshot of individual URL view and edit page"](https://raw.githubusercontent.com/quinnvoker/tinyApp/master/docs/url_edit.png)
 
 ## Dependencies
 
