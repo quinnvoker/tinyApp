@@ -51,7 +51,7 @@ app.get("/urls.json", (req, res) => {
 app.get('/urls', (req, res) => {
   const userId = req.session.userId;
   const user = users[userId];
-  const templateVars = { user, urls: urlsForUser(userId, urlDatabase) };
+  const templateVars = { user, getTotalHits, getUniqueHits, urls: urlsForUser(userId, urlDatabase) };
   res.render("urls_index", templateVars);
 });
 
@@ -86,10 +86,6 @@ app.get('/u/:shortURL', (req, res) => {
       req.session.visitorId = generateRandomString(6);
     }
     hitURL(shortURL, req.session.visitorId, urlDatabase);
-    console.log(urlDatabase[shortURL].hits);
-    console.log('Total Hits:', getTotalHits(shortURL, urlDatabase));
-    console.log('Unique Hits:', getUniqueHits(shortURL, urlDatabase));
-    console.log(getAllHits(shortURL, urlDatabase));
     res.redirect(urlDatabase[shortURL].longURL);
   } else {
     sendError(req, res, `TinyURL '${shortURL}' not found in database!`, 404);

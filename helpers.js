@@ -56,7 +56,6 @@ const getAllHits = (url, database) => {
       // turn each visitor's hit array into an array of visitorId: timestamp pairs
       const visits = urlHits[visitor]
         .reduce((visits, current) => visits.concat({ [visitor]: current }), []);
-      // add new paired array to combined list
       return list.concat(visits);
     }, [])
     // sort combined array by timestamp (descending)
