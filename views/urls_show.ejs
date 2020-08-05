@@ -23,6 +23,28 @@
           <input class="form-control spaced-input" type="text" name="longURL" placeholder="http://">
           <button type= "submit" class= "btn btn-primary">Submit</button>
         </form>
+        <br>
+        <div class="card">
+          <h4 style="margin-top:0.25em;">Visit Log:</h4>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Visit Time</th>
+                <th scope="col">Visitor ID</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% for(let hit of allHits) { %>
+                <% const key = Object.keys(hit)[0]; %>
+                <% const date = new Date(hit[key]) %>
+                <tr>
+                  <td><%= date %></td>
+                  <td><%= key %></td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
       <% } else { %>
         <h5>Only this TinyURL's owner can change what it links to.<% if (!user) { %> Please log in first!<% } %></h5>
       <% } %>

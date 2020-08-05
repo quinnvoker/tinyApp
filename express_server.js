@@ -74,7 +74,8 @@ app.get('/urls/:shortURL', (req, res) => {
   } else {
     const longURL = urlDatabase[shortURL].longURL;
     const isOwner = urlDatabase[shortURL].userId === userId;
-    const templateVars = { user, shortURL, longURL, isOwner };
+    const allHits = getAllHits(shortURL, urlDatabase);
+    const templateVars = { user, shortURL, longURL, isOwner, allHits };
     res.render("urls_show", templateVars);
   }
 });
