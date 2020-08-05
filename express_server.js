@@ -52,6 +52,11 @@ const totalHits = (url, database) => {
     .reduce((total, visitor) => total + urlHits[visitor].length, 0);
 };
 
+const uniqueHits = (url, database) => {
+  const urlHits = database[url].hits;
+  return Object.keys(urlHits).length;
+};
+
 app.get("/", (req, res) => {
   const user = users[req.session.userId];
   if (!user) {
@@ -104,7 +109,8 @@ app.get('/u/:shortURL', (req, res) => {
     }
     hitURL(shortURL, req.session.visitorId, urlDatabase);
     console.log(urlDatabase[shortURL].hits);
-    console.log('Total Hits', totalHits(shortURL, urlDatabase));
+    console.log('Total Hits:', totalHits(shortURL, urlDatabase));
+    console.log('Unique Hits:', uniqueHits(shortURL, urlDatabase));
     res.redirect(urlDatabase[shortURL].longURL);
   } else {
     sendError(req, res, `TinyURL '${shortURL}' not found in database!`, 404);
