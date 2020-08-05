@@ -1,6 +1,6 @@
 const express = require("express");
 const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 const generateRandomString = require('./randomString');
 const app = express();
@@ -9,7 +9,11 @@ const PORT = 8080; // default port 8080
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: ['is this a secret key?? lets find out together'],
+  maxAge: 24 * 60 * 60 * 1000, //24 hour expiry
+}));
 app.use(express.static('public'));
 
 const users = {};
@@ -46,14 +50,14 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
-  const userID = req.cookies.user_id;
+  const userID = req.session.user_id;
   const user = users[userID];
   let templateVars = { user, urls: urlsForUser(userID) };
   res.render("urls_index", templateVars);
 });
 
 app.get('/urls/new', (req, res) => {
-  const user = users[req.cookies.user_id];
+  const user = users[req.session.user_id];
   if (!user) {
     res.redirect('/login');
   } else {
@@ -63,7 +67,7 @@ app.get('/urls/new', (req, res) => {
 });
 
 app.get('/urls/:shortURL', (req, res) => {
-  const userID = req.cookies.user_id;
+  const userID = req.session.user_id;
   const user = users[userID];
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL].longURL;
@@ -83,20 +87,20 @@ app.get('/u/:shortURL', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-  const user = users[req.cookies.user_id];
+  const user = users[req.session.user_id];
   let templateVars = { user };
   res.render('register', templateVars);
 });
 
 app.get('/login', (req, res) => {
-  const user = users[req.cookies.user_id];
+  const user = users[req.session.user_id];
   let templateVars = { user };
   res.render('login', templateVars);
 });
 
 app.post('/urls', (req, res) => {
   const shortURL = generateRandomString(6);
-  const userID = req.cookies.user_id;
+  const userID = req.session.user_id;
   const longURL = req.body.longURL;
   urlDatabase[shortURL] = { longURL, userID };
   console.log(`Added ${longURL} to database with shortURL ${shortURL} with userID '${userID}'`);
@@ -147,7 +151,7 @@ app.post('/login', (req, res) => {
     res.statusCode = 403;
     res.send('403: incorrect password');
   } else {
-    res.cookie('user_id', user.id);
+    req.session.user_id = user.id;
     res.redirect('/urls');
   }
 });
