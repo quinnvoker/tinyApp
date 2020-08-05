@@ -19,16 +19,15 @@ app.use(express.static('public'));
 const users = {};
 
 const urlDatabase = {
+  // default entries for testing
   "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userId: 'quinnb' },
   "9sm5xK": { longURL: "http://www.google.com", userId: 'quinnb' },
-  "b2xVn3": { longURL: "http://www.youtube.com", userId: 'mikexv' },
-  "9sm5x3": { longURL: "http://www.twitch.tv", userId: 'mikexv' },
 };
 
+// send client a page containing a given error message and status code
 const sendError = (request, response, message, code = 200) => {
   response.statusCode = code;
-  const userId = request.session.userId;
-  const user = users[userId];
+  const user = users[request.session.userId];
   const errorMsg = `${code}: ${message}`;
   const templateVars = { user, errorMsg };
   response.render('error', templateVars);
@@ -88,8 +87,7 @@ app.get('/u/:shortURL', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-  const userId = req.session.userId;
-  const user = users[userId];
+  const user = users[req.session.userId];
   if (!user) {
     const templateVars = { user };
     res.render('register', templateVars);
@@ -99,8 +97,7 @@ app.get('/register', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  const userId = req.session.userId;
-  const user = users[userId];
+  const user = users[req.session.userId];
   if (!user) {
     const templateVars = { user };
     res.render('login', templateVars);
