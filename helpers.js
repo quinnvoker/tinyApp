@@ -48,4 +48,26 @@ const getUniqueHits = (url, database) => {
   return Object.keys(urlHits).length;
 };
 
-module.exports = { getUserByEmail, urlsForUser, generateRandomString, hitURL, getTotalHits, getUniqueHits };
+// returns a sorted array of visit objects (visitor: timestamp) for a given url
+const getAllHits = (url, database) => {
+  const urlHits = database[url].hits;
+  return Object.keys(urlHits)
+    .reduce((list, visitor) => {
+      // turn each visitor's hit array into an array of visitorId: timestamp pairs
+      const visits = urlHits[visitor]
+        .reduce((visits, current) => visits.concat({ [visitor]: current }), []);
+      // add new paired array to combined list
+      return list.concat(visits);
+    }, [])
+    // sort combined array by timestamp (descending)
+    .sort((a, b) => {
+      const valueA = Object.values(a)[0];
+      const valueB = Object.values(b)[0];
+      if (valueA === valueB) {
+        return 0;
+      }
+      return valueA > valueB ? -1 : 1;
+    });
+};
+
+module.exports = { getUserByEmail, urlsForUser, generateRandomString, hitURL, getTotalHits, getUniqueHits, getAllHits };

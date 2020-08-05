@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 const methodOverride = require('method-override');
-const { getUserByEmail, urlsForUser, generateRandomString, hitURL, getTotalHits, getUniqueHits } = require('./helpers');
+const { getUserByEmail, urlsForUser, generateRandomString, hitURL, getTotalHits, getUniqueHits, getAllHits } = require('./helpers');
 const app = express();
 const PORT = 8080; // default port 8080
 
@@ -89,6 +89,7 @@ app.get('/u/:shortURL', (req, res) => {
     console.log(urlDatabase[shortURL].hits);
     console.log('Total Hits:', getTotalHits(shortURL, urlDatabase));
     console.log('Unique Hits:', getUniqueHits(shortURL, urlDatabase));
+    console.log(getAllHits(shortURL, urlDatabase));
     res.redirect(urlDatabase[shortURL].longURL);
   } else {
     sendError(req, res, `TinyURL '${shortURL}' not found in database!`, 404);
