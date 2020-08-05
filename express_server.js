@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
-const generateRandomString = require('./randomString');
+const { generateRandomString, findUserByEmail, urlsForUser } = require('./helpers');
 const app = express();
 const PORT = 8080; // default port 8080
 
@@ -23,22 +23,6 @@ const urlDatabase = {
   "9sm5xK": { longURL: "http://www.google.com", userID: 'quinnb' },
   "b2xVn3": { longURL: "http://www.youtube.com", userID: 'mikexv' },
   "9sm5x3": { longURL: "http://www.twitch.tv", userID: 'mikexv' },
-};
-
-//returns key of the user registered with a given email address, null if not found
-const findUserByEmail = (email, database) => {
-  const foundKeys = Object.keys(database)
-    .filter((key) => database[key].email === email);
-  return foundKeys.length > 0 ? foundKeys[0] : null;
-};
-
-const urlsForUser = (id, database) => {
-  return Object.keys(database)
-    .filter(key => database[key].userID === id)
-    .reduce((result, currentKey) => {
-      result[currentKey] = database[currentKey];
-      return result;
-    }, {});
 };
 
 app.get("/", (req, res) => {
