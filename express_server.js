@@ -141,7 +141,6 @@ app.post('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = req.body.longURL;
   if (urlDatabase[shortURL]) {
-    console.log(req.session.user_id);
     if (urlDatabase[shortURL].userID === req.session.user_id) {
       urlDatabase[shortURL].longURL = longURL;
       res.redirect(`/urls`);
