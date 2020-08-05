@@ -22,8 +22,8 @@ const users = {};
 
 const urlDatabase = {
   // default entries for testing
-  "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userId: 'quinnb' },
-  "9sm5xK": { longURL: "http://www.google.com", userId: 'quinnb' },
+  "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userId: 'quinnb', hits: {} },
+  "9sm5xK": { longURL: "http://www.google.com", userId: 'quinnb', hits: {} },
 };
 
 // send client a page containing a given error message and status code
@@ -33,6 +33,17 @@ const sendError = (request, response, message, code = 200) => {
   const errorMsg = `${code}: ${message}`;
   const templateVars = { user, errorMsg };
   response.render('error', templateVars);
+};
+
+const hitURL = (url, visitorId, database) => {
+  const urlEntry = database[url];
+  if (!urlEntry) {
+    return;
+  }
+  if (!urlEntry.hits[visitorId]) {
+    urlEntry.hits[visitorId] = [];
+  }
+  urlEntry.hits[visitorId].push(Date.now());
 };
 
 app.get("/", (req, res) => {
@@ -82,6 +93,11 @@ app.get('/urls/:shortURL', (req, res) => {
 app.get('/u/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
   if (urlDatabase[shortURL]) {
+    if (!req.session.visitorId) {
+      req.session.visitorId = generateRandomString(6);
+    }
+    hitURL(shortURL, req.session.visitorId, urlDatabase);
+    console.log(urlDatabase[shortURL].hits);
     res.redirect(urlDatabase[shortURL].longURL);
   } else {
     sendError(req, res, `TinyURL '${shortURL}' not found in database!`, 404);
@@ -112,7 +128,7 @@ app.post('/urls', (req, res) => {
   const shortURL = generateRandomString(6);
   const userId = req.session.userId;
   const longURL = req.body.longURL;
-  urlDatabase[shortURL] = { longURL, userId };
+  urlDatabase[shortURL] = { longURL, userId, hits: {} };
   console.log(`Added ${longURL} to database with shortURL ${shortURL} with userId '${userId}'`);
   res.redirect(`/urls/${shortURL}`);
 });
