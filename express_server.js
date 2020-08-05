@@ -32,11 +32,11 @@ const findUserByEmail = (email, database) => {
   return foundKeys.length > 0 ? foundKeys[0] : null;
 };
 
-const urlsForUser = (id) => {
-  return Object.keys(urlDatabase)
-    .filter(key => urlDatabase[key].userID === id)
+const urlsForUser = (id, database) => {
+  return Object.keys(database)
+    .filter(key => database[key].userID === id)
     .reduce((result, currentKey) => {
-      result[currentKey] = urlDatabase[currentKey];
+      result[currentKey] = database[currentKey];
       return result;
     }, {});
 };
@@ -52,7 +52,7 @@ app.get("/urls.json", (req, res) => {
 app.get('/urls', (req, res) => {
   const userID = req.session.user_id;
   const user = users[userID];
-  let templateVars = { user, urls: urlsForUser(userID) };
+  let templateVars = { user, urls: urlsForUser(userID, urlDatabase) };
   res.render("urls_index", templateVars);
 });
 
