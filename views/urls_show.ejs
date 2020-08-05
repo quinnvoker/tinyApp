@@ -18,7 +18,7 @@
     <div class="card-footer text-muted">
       <% if (isOwner) { %>
         <h2>Edit</h2>
-        <form class="form-inline justify-content-center" method="POST" action=<%= '/urls/' + shortURL %>>
+        <form class="form-inline justify-content-center" method="POST" action="/urls/<%= shortURL %>?_method=PUT">
           <label for="longURL">New URL:</label>
           <input class="form-control spaced-input" type="text" name="longURL" placeholder="http://">
           <button type= "submit" class= "btn btn-primary">Submit</button>

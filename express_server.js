@@ -132,7 +132,7 @@ app.delete('/urls/:shortURL', (req, res) => {
   }
 });
 
-app.post('/urls/:shortURL', (req, res) => {
+app.put('/urls/:shortURL', (req, res) => {
   const userId = req.session.userId;
   const shortURL = req.params.shortURL;
   const longURL = req.body.longURL;
