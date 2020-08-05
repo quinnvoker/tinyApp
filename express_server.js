@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
+const methodOverride = require('method-override');
 const { generateRandomString, getUserByEmail, urlsForUser } = require('./helpers');
 const app = express();
 const PORT = 8080; // default port 8080
@@ -15,6 +16,7 @@ app.use(cookieSession({
   maxAge: 24 * 60 * 60 * 1000, //24 hour expiry
 }));
 app.use(express.static('public'));
+app.use(methodOverride('_method'));
 
 const users = {};
 
@@ -115,7 +117,7 @@ app.post('/urls', (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
-app.post('/urls/:shortURL/delete', (req, res) => {
+app.delete('/urls/:shortURL', (req, res) => {
   const userId = req.session.userId;
   const shortURL = req.params.shortURL;
   if (urlDatabase[shortURL]) {
