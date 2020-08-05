@@ -110,7 +110,7 @@ app.post('/urls', (req, res) => {
 app.post('/urls/:shortURL/delete', (req, res) => {
   const shortURL = req.params.shortURL;
   if (urlDatabase[shortURL]) {
-    if (urlDatabase[shortURL].userID === req.params.user_id) {
+    if (urlDatabase[shortURL].userID === req.session.user_id) {
       delete urlDatabase[shortURL];
       res.redirect(`/urls`);
     } else {
@@ -127,8 +127,9 @@ app.post('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = req.body.longURL;
   if (urlDatabase[shortURL]) {
-    if (urlDatabase[shortURL].userID === req.params.user_id) {
-      urlDatabase[shortURL] = longURL;
+    console.log(req.session.user_id);
+    if (urlDatabase[shortURL].userID === req.session.user_id) {
+      urlDatabase[shortURL].longURL = longURL;
       res.redirect(`/urls`);
     } else {
       res.statusCode = 403;
@@ -157,7 +158,7 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('user_id');
+  req.session = null;
   res.redirect('/urls');
 });
 
