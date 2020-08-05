@@ -117,37 +117,6 @@ app.post('/urls', (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
-app.delete('/urls/:shortURL', (req, res) => {
-  const userId = req.session.userId;
-  const shortURL = req.params.shortURL;
-  if (urlDatabase[shortURL]) {
-    if (urlDatabase[shortURL].userId === userId) {
-      delete urlDatabase[shortURL];
-      res.redirect(`/urls`);
-    } else {
-      sendError(req, res, 'You do not have permission to delete this TinyURL', 403);
-    }
-  } else {
-    sendError(req, res, `TinyURL '${shortURL}' was not found on the server!`, 404);
-  }
-});
-
-app.put('/urls/:shortURL', (req, res) => {
-  const userId = req.session.userId;
-  const shortURL = req.params.shortURL;
-  const longURL = req.body.longURL;
-  if (urlDatabase[shortURL]) {
-    if (urlDatabase[shortURL].userId === userId) {
-      urlDatabase[shortURL].longURL = longURL;
-      res.redirect(`/urls`);
-    } else {
-      sendError(req, res, 'You do not have permission to edit this TinyURL', 403);
-    }
-  } else {
-    sendError(req, res, `TinyURL '${shortURL}' was not found on the server!`, 404);
-  }
-});
-
 app.post('/login', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -183,6 +152,37 @@ app.post('/register', (req, res) => {
   }
 });
 
+app.put('/urls/:shortURL', (req, res) => {
+  const userId = req.session.userId;
+  const shortURL = req.params.shortURL;
+  const longURL = req.body.longURL;
+  if (urlDatabase[shortURL]) {
+    if (urlDatabase[shortURL].userId === userId) {
+      urlDatabase[shortURL].longURL = longURL;
+      res.redirect(`/urls`);
+    } else {
+      sendError(req, res, 'You do not have permission to edit this TinyURL', 403);
+    }
+  } else {
+    sendError(req, res, `TinyURL '${shortURL}' was not found on the server!`, 404);
+  }
+});
+
+app.delete('/urls/:shortURL', (req, res) => {
+  const userId = req.session.userId;
+  const shortURL = req.params.shortURL;
+  if (urlDatabase[shortURL]) {
+    if (urlDatabase[shortURL].userId === userId) {
+      delete urlDatabase[shortURL];
+      res.redirect(`/urls`);
+    } else {
+      sendError(req, res, 'You do not have permission to delete this TinyURL', 403);
+    }
+  } else {
+    sendError(req, res, `TinyURL '${shortURL}' was not found on the server!`, 404);
+  }
+});
+
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+  console.log(`TinyApp listening on port ${PORT}!`);
 });
