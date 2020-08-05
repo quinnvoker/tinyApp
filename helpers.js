@@ -23,4 +23,29 @@ const generateRandomString = (length) => {
     .join('');
 };
 
-module.exports = { getUserByEmail, urlsForUser, generateRandomString };
+// log a visit to the given url entry in the database
+const hitURL = (url, visitorId, database) => {
+  const urlEntry = database[url];
+  if (!urlEntry) {
+    return;
+  }
+  if (!urlEntry.hits[visitorId]) {
+    urlEntry.hits[visitorId] = [];
+  }
+  urlEntry.hits[visitorId].push(Date.now());
+};
+
+// returns how many times a given url has been visited
+const getTotalHits = (url, database) => {
+  const urlHits = database[url].hits;
+  return Object.keys(urlHits)
+    .reduce((total, visitor) => total + urlHits[visitor].length, 0);
+};
+
+// returns how many unique visitors have visited the given url
+const getUniqueHits = (url, database) => {
+  const urlHits = database[url].hits;
+  return Object.keys(urlHits).length;
+};
+
+module.exports = { getUserByEmail, urlsForUser, generateRandomString, hitURL, getTotalHits, getUniqueHits };

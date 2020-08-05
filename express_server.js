@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 const methodOverride = require('method-override');
-const { generateRandomString, getUserByEmail, urlsForUser } = require('./helpers');
+const { getUserByEmail, urlsForUser, generateRandomString, hitURL, getTotalHits, getUniqueHits } = require('./helpers');
 const app = express();
 const PORT = 8080; // default port 8080
 
@@ -33,28 +33,6 @@ const sendError = (request, response, message, code = 200) => {
   const errorMsg = `${code}: ${message}`;
   const templateVars = { user, errorMsg };
   response.render('error', templateVars);
-};
-
-const hitURL = (url, visitorId, database) => {
-  const urlEntry = database[url];
-  if (!urlEntry) {
-    return;
-  }
-  if (!urlEntry.hits[visitorId]) {
-    urlEntry.hits[visitorId] = [];
-  }
-  urlEntry.hits[visitorId].push(Date.now());
-};
-
-const totalHits = (url, database) => {
-  const urlHits = database[url].hits;
-  return Object.keys(urlHits)
-    .reduce((total, visitor) => total + urlHits[visitor].length, 0);
-};
-
-const uniqueHits = (url, database) => {
-  const urlHits = database[url].hits;
-  return Object.keys(urlHits).length;
 };
 
 app.get("/", (req, res) => {
@@ -109,8 +87,8 @@ app.get('/u/:shortURL', (req, res) => {
     }
     hitURL(shortURL, req.session.visitorId, urlDatabase);
     console.log(urlDatabase[shortURL].hits);
-    console.log('Total Hits:', totalHits(shortURL, urlDatabase));
-    console.log('Unique Hits:', uniqueHits(shortURL, urlDatabase));
+    console.log('Total Hits:', getTotalHits(shortURL, urlDatabase));
+    console.log('Unique Hits:', getUniqueHits(shortURL, urlDatabase));
     res.redirect(urlDatabase[shortURL].longURL);
   } else {
     sendError(req, res, `TinyURL '${shortURL}' not found in database!`, 404);
