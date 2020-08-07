@@ -37,6 +37,7 @@ const sendError = (request, response, message, code = 418) => {
 
 app.get("/", (req, res) => {
   const user = users[req.session.userId];
+  
   if (!user) {
     res.redirect('/login');
   } else {
@@ -57,6 +58,7 @@ app.get('/urls', (req, res) => {
 
 app.get('/urls/new', (req, res) => {
   const user = users[req.session.userId];
+
   if (!user) {
     res.redirect('/login');
   } else {
@@ -69,6 +71,7 @@ app.get('/urls/:shortURL', (req, res) => {
   const userId = req.session.userId;
   const user = users[userId];
   const shortURL = req.params.shortURL;
+
   if (!urlDatabase[shortURL]) {
     sendError(req, res, `TinyURL '${shortURL}' not found in database!`, 404);
   } else {
@@ -82,6 +85,7 @@ app.get('/urls/:shortURL', (req, res) => {
 
 app.get('/u/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
+
   if (urlDatabase[shortURL]) {
     if (!req.session.visitorId) {
       req.session.visitorId = generateRandomString(6);
@@ -95,6 +99,7 @@ app.get('/u/:shortURL', (req, res) => {
 
 app.get('/register', (req, res) => {
   const user = users[req.session.userId];
+
   if (!user) {
     const templateVars = { user };
     res.render('register', templateVars);
@@ -105,6 +110,7 @@ app.get('/register', (req, res) => {
 
 app.get('/login', (req, res) => {
   const user = users[req.session.userId];
+
   if (!user) {
     const templateVars = { user };
     res.render('login', templateVars);
@@ -117,6 +123,7 @@ app.post('/urls', (req, res) => {
   const shortURL = generateRandomString(6);
   const userId = req.session.userId;
   const longURL = req.body.longURL;
+
   urlDatabase[shortURL] = { longURL, userId, hits: {} };
   console.log(`Added ${longURL} to database with shortURL ${shortURL} with userId '${userId}'`);
   res.redirect(`/urls/${shortURL}`);
@@ -163,6 +170,7 @@ app.put('/urls/:shortURL', (req, res) => {
   const userId = req.session.userId;
   const shortURL = req.params.shortURL;
   const longURL = req.body.longURL;
+
   if (urlDatabase[shortURL]) {
     if (urlDatabase[shortURL].userId === userId) {
       urlDatabase[shortURL].longURL = longURL;
@@ -178,6 +186,7 @@ app.put('/urls/:shortURL', (req, res) => {
 app.delete('/urls/:shortURL', (req, res) => {
   const userId = req.session.userId;
   const shortURL = req.params.shortURL;
+
   if (urlDatabase[shortURL]) {
     if (urlDatabase[shortURL].userId === userId) {
       delete urlDatabase[shortURL];
