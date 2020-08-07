@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 const methodOverride = require('method-override');
-const { getUserByEmail, urlsForUser, generateRandomString, hitURL, getTotalHits, getUniqueHits, getAllHits } = require('./helpers');
+const { getUserByEmail, urlsForUser, generateRandomString, hitURL, getTotalHits, getUniqueHits, getAllHits } = require('./helpers/helpers');
 const app = express();
 const PORT = 8080; // default port 8080
 

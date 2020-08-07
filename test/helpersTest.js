@@ -1,6 +1,6 @@
 const { expect } = require('chai');
 
-const { getUserByEmail, urlsForUser, hitURL, getTotalHits, getUniqueHits, getAllHits } = require('../helpers.js');
+const { getUserByEmail, urlsForUser, hitURL, getTotalHits, getUniqueHits, getAllHits } = require('../helpers/helpers.js');
 
 const testUsers = {
   "userRandomID": {
