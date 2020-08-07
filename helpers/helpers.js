@@ -63,8 +63,8 @@ const getAllHits = (url, database) => {
   return Object.keys(urlHits)
     .reduce((list, visitor) => {
       // turn each visitor's hit array into an array of visitorId: timestamp pairs
-      const visits = urlHits[visitor]
-        .reduce((visits, current) => visits.concat({ [visitor]: current }), []);
+      const visits = urlHits[visitor].map(x => ({[visitor]: x}));
+      //.reduce((visits, current) => visits.concat({ [visitor]: current }), []);
       return list.concat(visits);
     }, [])
     // sort combined array by timestamp (descending)
