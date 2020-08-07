@@ -27,7 +27,7 @@ const urlDatabase = {
 };
 
 // send client a page containing a given error message and status code
-const sendError = (request, response, message, code = 200) => {
+const sendError = (request, response, message, code = 418) => {
   response.statusCode = code;
   const user = users[request.session.userId];
   const errorMsg = `${code}: ${message}`;
@@ -126,6 +126,7 @@ app.post('/login', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const user = users[getUserByEmail(email, users)];
+
   if (!user) {
     sendError(req, res, 'Given email address not associated with any registered user', 403);
   } else if (!bcrypt.compareSync(password, user.password)) {
@@ -146,6 +147,7 @@ app.post('/register', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const hashedPass = bcrypt.hashSync(password, 10);
+
   if (!email || !password) {
     sendError(req, res, 'Invalid email or password', 400);
   } else if (getUserByEmail(email, users)) {
